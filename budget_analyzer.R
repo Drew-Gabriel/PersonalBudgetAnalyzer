@@ -1,7 +1,32 @@
 # Personal Budget and Expense Analyzer
-# This program analyzes personal expenses by category.
+# This program demonstrates basic R programming concepts.
 
-# Create sample expense data
+# ---------------------------------------------------------
+# 1. Create different R data types
+# ---------------------------------------------------------
+
+# Character data type
+user_name <- "Taiye"
+
+# Numeric data type
+monthly_budget <- 1000
+
+# Integer data type
+number_of_expenses <- 10L
+
+# Logical data type
+budget_active <- TRUE
+
+# Factor data type
+expense_type <- factor(c("Essential", "Optional"))
+
+# Complex data type
+complex_number <- 5 + 2i
+
+# ---------------------------------------------------------
+# 2. Create expense data
+# ---------------------------------------------------------
+
 expenses <- data.frame(
   Category = c(
     "Food", "Transportation", "Rent", "Entertainment",
@@ -19,33 +44,79 @@ expenses <- data.frame(
 cat("PERSONAL BUDGET AND EXPENSE ANALYZER\n")
 cat("====================================\n\n")
 
+cat("User:", user_name, "\n\n")
+
 print(expenses)
 
-# Calculate total spending
-total_spending <- sum(expenses$Amount)
+# ---------------------------------------------------------
+# 3. Functions
+# ---------------------------------------------------------
 
-# Calculate average expense
-average_expense <- mean(expenses$Amount)
+# Calculate the total amount spent.
+calculate_total <- function(amounts) {
+  return(sum(amounts))
+}
 
-# Calculate spending by category
+# Calculate the average expense.
+calculate_average <- function(amounts) {
+  return(mean(amounts))
+}
+
+# Find the highest spending category.
+find_highest_category <- function(data) {
+  totals <- aggregate(
+    Amount ~ Category,
+    data = data,
+    FUN = sum
+  )
+
+  highest <- totals$Category[
+    which.max(totals$Amount)
+  ]
+
+  return(highest)
+}
+
+# ---------------------------------------------------------
+# 4. Use the functions
+# ---------------------------------------------------------
+
+total_spending <- calculate_total(expenses$Amount)
+
+average_expense <- calculate_average(expenses$Amount)
+
+highest_category <- find_highest_category(expenses)
+
+# Find the highest category amount
 category_totals <- aggregate(
   Amount ~ Category,
   data = expenses,
   FUN = sum
 )
 
-# Find the category with the highest spending
-highest_category <- category_totals$Category[
-  which.max(category_totals$Amount)
-]
-
 highest_amount <- max(category_totals$Amount)
 
-# Display results
+# ---------------------------------------------------------
+# 5. Display summary
+# ---------------------------------------------------------
+
 cat("\nSUMMARY\n")
 cat("=======\n")
-cat("Total spending: $", total_spending, "\n", sep = "")
-cat("Average expense: $", round(average_expense, 2), "\n", sep = "")
+
+cat(
+  "Total spending: $",
+  total_spending,
+  "\n",
+  sep = ""
+)
+
+cat(
+  "Average expense: $",
+  round(average_expense, 2),
+  "\n",
+  sep = ""
+)
+
 cat(
   "Highest spending category: ",
   highest_category,
@@ -55,7 +126,90 @@ cat(
   sep = ""
 )
 
-# Create a bar chart of spending by category
+# ---------------------------------------------------------
+# 6. Use a loop with a list
+# ---------------------------------------------------------
+
+budget_information <- list(
+  Budget = monthly_budget,
+  TotalSpent = total_spending,
+  AverageExpense = average_expense,
+  HighestCategory = highest_category
+)
+
+cat("\nBUDGET INFORMATION\n")
+cat("==================\n")
+
+for (item in names(budget_information)) {
+  cat(
+    item,
+    ": ",
+    budget_information[[item]],
+    "\n",
+    sep = ""
+  )
+}
+
+# ---------------------------------------------------------
+# 7. Check the budget
+# ---------------------------------------------------------
+
+remaining_budget <- monthly_budget - total_spending
+
+cat("\nBUDGET STATUS\n")
+cat("=============\n")
+
+if (remaining_budget >= 0) {
+  cat(
+    "Remaining budget: $",
+    remaining_budget,
+    "\n",
+    sep = ""
+  )
+} else {
+  cat(
+    "Budget exceeded by: $",
+    abs(remaining_budget),
+    "\n",
+    sep = ""
+  )
+}
+
+# ---------------------------------------------------------
+# 8. Use case_when
+# ---------------------------------------------------------
+
+# Classify each expense according to its amount.
+expenses$SpendingLevel <- dplyr::case_when(
+  expenses$Amount < 50 ~ "Low",
+  expenses$Amount < 100 ~ "Medium",
+  TRUE ~ "High"
+)
+
+cat("\nEXPENSE LEVELS\n")
+cat("==============\n")
+
+print(expenses)
+
+# ---------------------------------------------------------
+# 9. Create category totals
+# ---------------------------------------------------------
+
+category_totals <- aggregate(
+  Amount ~ Category,
+  data = expenses,
+  FUN = sum
+)
+
+cat("\nSPENDING BY CATEGORY\n")
+cat("====================\n")
+
+print(category_totals)
+
+# ---------------------------------------------------------
+# 10. Create a bar chart
+# ---------------------------------------------------------
+
 barplot(
   category_totals$Amount,
   names.arg = category_totals$Category,
@@ -64,3 +218,10 @@ barplot(
   ylab = "Amount Spent",
   las = 2
 )
+
+# ---------------------------------------------------------
+# 11. Final message
+# ---------------------------------------------------------
+
+cat("\nAnalysis complete.\n")
+cat("Thank you for using the Personal Budget and Expense Analyzer!\n")
